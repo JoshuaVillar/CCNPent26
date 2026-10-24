@@ -1,0 +1,43 @@
+
+!@PE-B
+conf t
+ router isis MPLS
+  router-id lo0
+  net 22.2222.0000.0000.0022.00
+  is-type level-1
+  passive-interface lo0
+  !
+ int lo0
+  ip router isis MPLS
+ int range e1/0,e0/2
+  ip router isis MPLS
+  isis network point-to-point
+  end
+
+
+
+===
+
+ISIS   LDP   Labels
+VRF
+ - RD
+ - RT
+
+mpBGP  VPNv4
+
+!@PE-A
+conf t
+  router bgp 65000
+   address-family ipv4 vrf BPI
+    neighbor 10.1.1.1 as-override
+  router isis MPLS
+   is-type level-1-2
+end
+
+!@PE-Z
+  router bgp 65000
+   address-family ipv4 vrf BPI
+    neighbor 10.1.1.5 as-override
+  router isis MPLS
+   is-type level-1-2
+end

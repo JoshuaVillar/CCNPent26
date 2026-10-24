@@ -1,0 +1,149 @@
+
+/32	2nd	4	1i
+/41	3rd	3	8i
+/70	5th	2	4i
+/7	1st	2	2i
+/111	7th	4	2i
+/124	8th	3	1i
+
+
+Exercise: Subnet for 8 offices using the network address fd00:1::/64
+Convert: 8 office = 3 bits
+Add: /64 + 3 bits = /67 (5,1st,2i)
+Ipasok si i sa butas:
+fd00:0001:0000:0000:0000:0000:0000:0000/67
+1st Offices:		:0000:
+2nd 			:2000:
+3rd			:4000:
+4th			:6000:
+5th			:8000:
+6th			:A000:
+7th			:C000:
+8th			:E000:
+
+
+
+Exercise: Subnet for 4 offices using the network address fd00:2::/64
+C:4 office = 2 bits
+A:/66 (5,1,4i)
+I:
+fd00:0002:0000:0000:0000:0000:0000:0000/66
+1st		             :0000:
+2nd			     :4000:
+3rd			     :8000:
+4th			     :C000:
+
+
+
+
+Exercise: Subnet for 52 offices using the network address fd00:3:0:33::/112  Determine the 6th subnet.
+
+C: 52 office = 6 bits
+A: /112 + 6 = /118 8,2,4i
+I:
+fd00:0003:0000:0033:0000:0000:0000:0000/118
+1st				  :0000:
+2nd				  :0400:
+3rd				  :0800:
+4th				  :0C00:
+5th				  :1000:
+6th				  :1400:
+
+Network:fd00:0003:0000:0033:0000:0000:0000:1400/118
+First IP: fd00:0003:0000:0033:0000:0000:0000:1401/118
+Last AnyIP: fd00:0003:0000:0033:0000:0000:0000:17FF/118
+First Anycast IP: fd00:0003:0000:0033:0000:0000:0000:1780/118
+Last Non Anycast: fd00:0003:0000:0033:0000:0000:0000:177F/118	
+NOT: fd00:0003:0000:0033:0000:0000:0000:1800/118		
+
+!@R2
+conf t 
+  ipv6 unicast-routing
+  int e0/2
+   ipv6 add fd00:3:0:33::1401/118
+   no shut
+end	
+
+!@R3
+conf t 
+  ipv6 unicast-routing
+  int e0/2
+   no ipv6 add fd00:3:0:33::17FF/118
+   ipv6 add fd00:3:0:33::177F/118
+   no shut
+end			
+
+config t
+   int tunnel 34
+     ospfv3 6 ipv6 area 34
+end
+
+!@R6
+conf t
+   ipv6 unicast-routing
+   int tunnel 46
+   no ip add
+   ipv6 add fd00:46::6/64
+   tunnel source lo6
+   tunnel destination	4.4.4.4
+   tunnel mode ipv6ip
+!
+   router ospfv3 6
+     router-id 6.6.6.6
+     int tunnel 46
+     ospfv3 6 ipv6 area 34
+end
+
+!@R4
+conf t
+   ipv6 unicast-routing
+   int tunnel 46
+   no ip add
+   ipv6 add fd00:46::4/64
+   tunnel source lo4
+   tunnel destination	6.6.6.6
+   tunnel mode ipv6ip
+!
+   router ospfv3 6
+     router-id 4.4.4.4
+     int tunnel 46
+     ospfv3 6 ipv6 area 34
+end
+
+
+!@R1
+conf t
+ router ospfv3 6
+  address-family ipv6
+   default-information originate always
+   router bgp 1
+   address-family ipv6 unicast
+   redistribute ospf 6 match internal external 1 external 2 include-connected
+   end
+
+1.INSERT FFFE sa gitna
+aabb.cc    01.7230
+       FFFE
+aabb.ccff.fe01.7230
+
+2. Flip the 7th bit
+a	a
+1010	1010
+a	8
+1010	1000
+
+a8bb.ccff.fe01.7230
+
+fd00:6::4:0/112
+
+Network: fd00:0006:0000:0000:0000:0000:0004:0000/112
+
+
+
+
+
+
+
+
+
+

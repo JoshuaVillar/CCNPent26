@@ -1,0 +1,26 @@
+fd00:6::4:0/112(7th,4,1i)
+/112 (7th,4,1i)
+Network: fd00:0006:0000:0000:0000:0000:0004:0000/112
+First IP:fd00:0006:0000:0000:0000:0000:0004:0001/112
+Last NON Any IP:fd00:0006:0000:0000:0000:0000:0004:FF7F/112
+First Anycast IP:fd00:0006:0000:0000:0000:0000:0004:FF80/112
+Last Anycast IP: fd00:0006:0000:0000:0000:0000:0004:FFFF/112
+
+###DHCPv6
+
+!@C1
+conf t
+  ipv6 unicast-routing
+  !
+  ipv6 dhcp pool TELSTRA.COM
+  address prefix fd00:6::4:/112
+  !
+  vlan 40
+    name TELSTRA.COM
+  int vlan 40
+  no shut
+  ipv6 add fd00:6::4:1/112
+  ipv6 dhcp server TELSTRA.COM
+  ipv6 nd managed-config-flag     !M Flag (address via DHCP)
+  ipv6 nd other-config-flag       !O Flag (options via DHCP)
+  end

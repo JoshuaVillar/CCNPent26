@@ -1,0 +1,31 @@
+!@PE-B
+conf t
+  router ospf 1 vrf BPO
+   network 10.1.1.0 0.0.0.3 area 0
+   redistribute bgp 65000 subnets
+  router bgp 65000
+   address-family ipv4 vrf BPO
+  redistribute ospf 1
+  router isis MPLS
+  is-type level-1-2
+end
+
+conf t
+  router ospf 1 vrf BPO
+   network 10.1.1.4 0.0.0.3 area 0
+   redistribute bgp 65000 subnets
+  router bgp 65000
+   address-family ipv4 vrf BPO
+  redistribute ospf 1
+  router isis MPLS
+  is-type level-1-2
+end
+
+!@PS1,PS2
+conf t
+  vlan dot1q tag native
+  int e0/0
+   l2protocol-tunnel stp
+   l2protocol-tunnel vtp
+   l2protocol-tunnel cdp
+end
